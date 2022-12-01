@@ -9,6 +9,8 @@ from flask import (
 )
 import hashlib
 
+import simulator.pkg.src.pkg.main as simCode
+
 class User:
     def __init__(self, id, username, password):
         self.id = id
@@ -37,6 +39,19 @@ def before_request():
         user = [x for x in users if x.id == session['user_id']][0]
         g.user = user
         
+@app.route('/codesubmit', methods =["GET", "POST"])
+def codesubmit():
+    if request.method == "POST":
+        return render_template("codesubmit.html")
+        code = request.form.get("code_")
+        result = simCode.testCode(code)
+        return render_template("yay.html", run_time=result)
+@app.route('/compilecode', methods =["GET", "POST"])
+def compilecode():
+    if request.method == "POST":
+        code = request.form.get("code_")
+        result = simCode.testCode(code)
+        return render_template("yay.html", run_time=result)
 
 @app.route('/login1', methods=['GET', 'POST'])
 def login1():
