@@ -7,6 +7,7 @@ from flask import (
     session,
     url_for
 )
+import hashlib
 
 class User:
     def __init__(self, id, username, password):
@@ -18,10 +19,11 @@ class User:
         return f'<User: {self.username}>'
 
 users = []
-users.append(User(id=0, username='devuser', password='devuser'))
-users.append(User(id=1, username='A', password='1'))
-users.append(User(id=2, username='B', password='2'))
-users.append(User(id=3, username='C', password='3'))
+#devuser:devuser
+#A:1
+users.append(User(id=0, username='devuser', password='6684282bf0c558ae99560ccd9eea5c3ba9d36767132a11a8298bdc6fcb0d368d623fd1305f2c6ac2782a5356d425fc664661c3f9503e7b37c9c2401a05d8130c'))
+users.append(User(id=1, username='A', password='4dff4ea340f0a823f15d3f4f01ab62eae0e5da579ccb851f8db9dfe84c58b2b37b89903a740e1ee172da793a6e79d560e5f7f9bd058a12a280433ed6fa46510a'))
+
 
 
 app = Flask(__name__)
@@ -42,7 +44,8 @@ def login1():
         session.pop('user_id', None)
 
         username = request.form['username']
-        password = request.form['password']
+        password = hashlib.sha512(request.form['password'].encode()).hexdigest() 
+
         try:        
             user = [x for x in users if x.username == username][0]
             if user and user.password == password:
