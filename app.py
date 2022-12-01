@@ -66,8 +66,9 @@ def logout1():
 
 @app.route('/profile')
 def profile():
-    if not g.user:
-        return redirect(url_for('login'))
+    
+    if 'user_id' not in session:
+        return redirect(url_for('login1'))
 
     return render_template('profile.html')
 
