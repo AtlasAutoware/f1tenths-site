@@ -52,9 +52,27 @@ def compilecode():
         code = request.form.get("code_")
         result = simCode.testCode(code)
         return render_template("yay.html", run_time=result)
+@app.route('/leaderboard', methods =["GET", "POST"])
+def leaderboard():
+    if request.method == "POST":
+        return render_template("leaderboard.html")
+    return render_template("leaderboard.html")
+
+
+@app.route('/back2home', methods =["GET", "POST"])
+def back2home():
+    if request.method == "POST":
+
+        if 'user_id' not in session:
+            return redirect(url_for('login1'))
+
+        return redirect(url_for('profile'))
 
 @app.route('/login1', methods=['GET', 'POST'])
 def login1():
+    
+    if 'user_id' in session:
+        return redirect(url_for('profile'))
     if request.method == 'POST':
         session.pop('user_id', None)
 
@@ -84,7 +102,6 @@ def logout1():
 
 @app.route('/profile')
 def profile():
-    
     if 'user_id' not in session:
         return redirect(url_for('login1'))
 
