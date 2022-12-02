@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Register</title>
+    </head>
+
+    <body>
+        <section>
+            {{ txt }}
+            <div>
+                <div>
+                    <div>
+                        <div>
+                            <form action='{{ url_for("register")}}' method="POST">
+                                <div>
+                                    <label class="label">Email</label>
+                                    <div>
+                                        <input
+                                            class="input"
+                                            type="text"
+                                            name="email1"
+                                            placeholder=""
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="label">Confirm Email</label>
+                                    <div>
+                                        <input
+                                            class="input"
+                                            type="text"
+                                            name="email2"
+                                            placeholder=""
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="label">Username</label>
+                                    <div>
+                                        <input
+                                            class="input"
+                                            type="text"
+                                            name="username"
+                                            placeholder=""
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="label">Password</label>
+                                    <div>
+                                        <input
+                                            class="input"
+                                            type="password"
+                                            name="password1"
+                                            placeholder=""
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="label">Confirm Password</label>
+                                    <div>
+                                        <input
+                                            class="input"
+                                            type="password"
+                                            name="passwrod2"
+                                            placeholder=""
+                                        />
+                                    </div>
+                                </div>
+                                <button type="submit" class="button">
+                                    Register
+                                </button>
+
+
+
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

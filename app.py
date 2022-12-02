@@ -20,11 +20,27 @@ class User:
     def __repr__(self):
         return f'<User: {self.username}>'
 
+import mysql.connector
+
+#SQL Accessing info
+with open("login") as rfile:
+    login = [i.strip() for i in rfile.readlines()]
+mydb = mysql.connector.connect(
+  host="localhost",
+  user=login[0],
+  password=login[1],
+  database=login[2]
+)
+
+mycursor = mydb.cursor()
+mycursor.execute("SELECT * FROM "+login[3])
+myresult = mycursor.fetchall()
+
 users = []
 #devuser:devuser
 #A:1
-users.append(User(id=0, username='devuser', password='6684282bf0c558ae99560ccd9eea5c3ba9d36767132a11a8298bdc6fcb0d368d623fd1305f2c6ac2782a5356d425fc664661c3f9503e7b37c9c2401a05d8130c'))
-users.append(User(id=1, username='A', password='4dff4ea340f0a823f15d3f4f01ab62eae0e5da579ccb851f8db9dfe84c58b2b37b89903a740e1ee172da793a6e79d560e5f7f9bd058a12a280433ed6fa46510a'))
+for i in myresult:
+    users.append(User(id=i[0],username=i[1],password=i[2]))
 
 
 
@@ -52,12 +68,20 @@ def compilecode():
         code = request.form.get("code_")
         result = simCode.testCode(code)
         return render_template("yay.html", run_time=result)
+
+
+
 @app.route('/leaderboard', methods =["GET", "POST"])
 def leaderboard():
     if request.method == "POST":
         return render_template("leaderboard.html")
     return render_template("leaderboard.html")
 
+@app.route('/register', methods =["GET", "POST"])
+def register():
+    if request.method == "POST":
+        return render_template("register.html")
+    return render_template("register.html")
 
 @app.route('/back2home', methods =["GET", "POST"])
 def back2home():
@@ -68,6 +92,8 @@ def back2home():
 
         return redirect(url_for('profile'))
 
+
+
 @app.route('/login1', methods=['GET', 'POST'])
 def login1():
     
@@ -77,7 +103,7 @@ def login1():
         session.pop('user_id', None)
 
         username = request.form['username']
-        password = hashlib.sha512(request.form['password'].encode()).hexdigest() 
+        password = hashlib.sha224(request.form['password'].encode()).hexdigest() 
 
         try:        
             user = [x for x in users if x.username == username][0]
@@ -92,12 +118,12 @@ def login1():
 
 
     return render_template('login.html',txt="")
-
 @app.route('/logout1', methods=['GET', 'POST'])
 def logout1():
     session.pop('user_id', None)
     g.user = None
     return render_template('login.html',txt="Logged out")
+
 
 
 @app.route('/profile')
@@ -106,6 +132,8 @@ def profile():
         return redirect(url_for('login1'))
 
     return render_template('profile.html')
+
+
 
 @app.route('/')
 def index():
