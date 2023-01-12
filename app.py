@@ -7,15 +7,19 @@ from flask import (
     session,
     url_for
 )
+
+from multiprocessing import Value
 import hashlib
-
+import sys
 import simulator.pkg.src.pkg.main as simCode
-
+import re
 class User:
-    def __init__(self, id, username, password):
+    def __init__(self, id, username, password,email):
         self.id = id
         self.username = username
-        self.password = password
+        self.password = password #do you really think we would store the password here?
+
+        self.email = email
 
     def __repr__(self):
         return f'<User: {self.username}>'
@@ -35,12 +39,23 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 mycursor.execute("SELECT * FROM "+login[3])
 myresult = mycursor.fetchall()
+print(myresult)
 
 users = []
 #devuser:devuser
 #A:1
+#print(myresult)
+j = Value('i',1)
+#global j
 for i in myresult:
-    users.append(User(id=i[0],username=i[1],password=i[2]))
+    
+    with j.get_lock():
+        users.append(User(id=i[0],username=i[1],password=i[2],email=i[3]))
+        j.value += 1;
+
+
+
+
 
 
 
@@ -52,9 +67,15 @@ def before_request():
     g.user = None
 
     if 'user_id' in session:
-        user = [x for x in users if x.id == session['user_id']][0]
-        g.user = user
-        
+        print(users)
+        try:
+            user = [x for x in users if x.id == session['user_id']][0]
+            g.user = user
+            print(g.user)
+        except IndexError:
+            session.pop('user_id', None)
+            g.user = None
+
 @app.route('/codesubmit', methods =["GET", "POST"])
 def codesubmit():
     if request.method == "POST":
@@ -80,9 +101,54 @@ def leaderboard():
 @app.route('/register', methods =["GET", "POST"])
 def register():
     if request.method == "POST":
-        return render_template("register.html")
-    return render_template("register.html")
+        return render_template("register.html", txt="")
+        
+    return render_template("register.html", txt="")
+@app.route('/register1', methods =["GET", "POST"])
+def register1():
+    #print('Hello world!', file=sys.stderr)
+    if request.method == "POST":
+        return render_template("register.html", txt="Emails/passwords do not match")
+    return render_template("register.html", txt="Emails/passwords do not match")
+@app.route('/register2', methods =["GET", "POST"])
+def register2():
+    #print('Hello world!', file=sys.stderr)
+    if request.method == "POST":
+        return render_template("register.html", txt="Bad username/password/email")
+    return render_template("register.html", txt="Bad username/password/email")
+@app.route('/registered', methods=["GET","POST"])
+def registered():
+    if request.method == "POST":
+        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        usn = r'^[a-zA-Z0-9_-]*$'
+        
+        if(not re.fullmatch(usn,request.form['username']) or request.form['username']=='' or not re.fullmatch(regex,request.form['email1']) or not re.fullmatch(regex,request.form['email2'])):
+            return redirect(url_for('register2'))
+        
+        if(request.form['email1'] == request.form['email2'] and request.form['password1'] == request.form['password2']):
+            
+            with j.get_lock():
+                u1 = request.form['username']
+                p1 = hashlib.sha224(request.form['password1'].encode()).hexdigest()
+                e1 = request.form['email2']
+                users.append(User(id=j.value,username=u1,password= p1,email= e1))
 
+                j.value += 1
+            mycursor = mydb.cursor()
+            #print("insert into login (username,pwhash,email) values ('"+u1+"', '"+p1+"', '"+e1+"'"+")")
+            #try:
+            mycursor.execute("insert into login (username,pwhash,email) values ('"+u1+"', '"+p1+"', '"+e1+"'"+")")
+            mydb.commit()
+            return redirect(url_for('login2'))
+            #except:
+            #    mycursor.rollback()
+            #    return redirect(url_for('login3'))
+            #myresult = mycursor.fetchall()
+            
+        if(request.form['email1'] != request.form['email2'] or request.form['password1'] != request.form['password2']):
+            return redirect(url_for('register1'))
+        return redirect(url_for('register'))
+    return redirect(url_for('register'))
 @app.route('/back2home', methods =["GET", "POST"])
 def back2home():
     if request.method == "POST":
@@ -92,7 +158,12 @@ def back2home():
 
         return redirect(url_for('profile'))
 
-
+@app.route('/login2',methods=['GET','POST'])
+def login2():
+    return render_template('login.html',txt="Created user")
+@app.route('/login3',methods=['GET','POST'])
+def login3():
+    return render_template('login.html',txt="Error making user: try again")
 
 @app.route('/login1', methods=['GET', 'POST'])
 def login1():
@@ -137,4 +208,4 @@ def profile():
 
 @app.route('/')
 def index():
-    return render_template('login.html',txt="")
+    return redirect(url_for('profile'))
