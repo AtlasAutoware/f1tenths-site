@@ -8,13 +8,14 @@
     </head>
     <body>
         <h1>Leaderboard</h1>
-        <table align="center" id="leaderboard">
-            <tr>
-                <td><b>Rank</b></td>
-                <td><b>Name</b></td>
-                <td><b>Time</b></td>
-            </tr>
-        </table>
+       
+        {% for item in runs %}
+            
+              <p>{{ item.runtime }}</p>
+              <p>{{ item.time }}</p>
+            <p>{{ item.username }}</p>
+            
+        {% endfor %}
         <form action='{{ url_for("back2home")}}' method="POST">
             <div>
                 <p>

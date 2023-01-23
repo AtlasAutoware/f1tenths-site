@@ -13,6 +13,7 @@ import hashlib
 import sys
 import simulator.pkg.src.pkg.main as simCode
 import re
+from datetime import datetime
 class User:
     def __init__(self, id, username, password,email):
         self.id = id
@@ -23,6 +24,16 @@ class User:
 
     def __repr__(self):
         return f'<User: {self.username}>'
+
+class Run:
+    def __init__(self, id, runtime, time, username):
+        self.id = id
+        self.runtime = runtime
+        self.time = time.strftime("%Y-%m-%d %H:%M:%S")
+        self.username = username
+        
+    def __repr__(self):
+        return f'<Run: {self.id}>'
 
 import mysql.connector
 
@@ -40,20 +51,23 @@ mycursor = mydb.cursor()
 mycursor.execute("SELECT * FROM "+login[3])
 myresult = mycursor.fetchall()
 print(myresult)
-
 users = []
-#devuser:devuser
-#A:1
-#print(myresult)
 j = Value('i',1)
-#global j
 for i in myresult:
     
     with j.get_lock():
         users.append(User(id=i[0],username=i[1],password=i[2],email=i[3]))
         j.value += 1;
 
-
+mycursor = mydb.cursor()
+#print("select runs.id, runtime, time, username from "+ login[4] + " join "+ login[3] +" on userid = "+login[3]+".id")
+mycursor.execute("select runs.id, runtime, time, username from "+ login[4] + " join "+ login[3] +" on userid = "+login[3]+".id")
+myresult = mycursor.fetchall()
+print(myresult)
+runs = []
+for i in myresult:
+    runs.append(Run(id=i[0],runtime=i[1],time=i[2],username=i[3]))
+     
 
 
 
@@ -88,15 +102,30 @@ def compilecode():
     if request.method == "POST":
         code = request.form.get("code_")
         result = simCode.testCode(code)
+        if(str(result) == "Crash"):
+            result1 = "99999.99999"
+        else:
+            result1 = '%.3f' % float(result)
+        now = datetime.now()
+        now = now.strftime("%Y-%m-%d %H:%M:%S")
+        
+        mydb.reconnect()
+        mycursor = mydb.cursor()
+        #print()
+        mycursor.execute("insert into runs (runtime,time,userid) values ('"+result1+"', '"+now+"', '"+str(g.user.id)+"'"+")")
+        runs.sort(key=lambda x: x.runtime, reverse=False)
+    
+        mydb.commit()
         return render_template("yay.html", run_time=result)
-
-
+        
+            
+   
 
 @app.route('/leaderboard', methods =["GET", "POST"])
 def leaderboard():
     if request.method == "POST":
-        return render_template("leaderboard.html")
-    return render_template("leaderboard.html")
+        return render_template("leaderboard.html", runs=runs)
+    return render_template("leaderboard.html", runs=runs)
 
 @app.route('/register', methods =["GET", "POST"])
 def register():
@@ -134,12 +163,20 @@ def registered():
                 users.append(User(id=j.value,username=u1,password= p1,email= e1))
 
                 j.value += 1
-            mycursor = mydb.cursor()
-            #print("insert into login (username,pwhash,email) values ('"+u1+"', '"+p1+"', '"+e1+"'"+")")
-            #try:
-            mycursor.execute("insert into login (username,pwhash,email) values ('"+u1+"', '"+p1+"', '"+e1+"'"+")")
-            mydb.commit()
-            return redirect(url_for('login2'))
+                mydb.reconnect()
+                mycursor = mydb.cursor()
+                #print("insert into login (username,pwhash,email) values ('"+u1+"', '"+p1+"', '"+e1+"'"+")")
+                #try:
+                mycursor.execute("insert into login (username,pwhash,email) values ('"+u1+"', '"+p1+"', '"+e1+"'"+")")
+                
+            
+                mydb.commit()
+                return redirect(url_for('login2'))
+            
+            
+                mydb.session.rollback()
+                return render_template("error.html", theerror = "MySQL unable to save")
+        
             #except:
             #    mycursor.rollback()
             #    return redirect(url_for('login3'))
@@ -197,7 +234,7 @@ def logout1():
 
 
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET','POST'])
 def profile():
     if 'user_id' not in session:
         return redirect(url_for('login1'))
