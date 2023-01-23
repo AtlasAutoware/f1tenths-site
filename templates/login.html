@@ -4,75 +4,67 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Login</title>
+        {% assets 'css' %}
+        <link rel="stylesheet" href="{{ ASSET_URL }}" />
+        {% endassets %}
     </head>
 
     <body>
-        <section>
+        <section class="main-sect">
+            <p class="err">
             {{ txt }}
+            </p>
             <div>
-                <div>
-                    <div>
+                <h1> SDT Algo Submit </h1>
+                <form action='{{ url_for("login1")}}' method="POST" class="login-up">
+                    
+                    <input
+                        class="input"
+                        type="text"
+                        name="username"
+                        placeholder="Username"
+                    />
+                
+                    <input
+                        class="input"
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                    />
+                    <button type="submit" class="button">
+                        Login
+                    </button>
+                    
+                </form>
+                <div class="regled">
+                    <form
+                        action='{{ url_for("register")}}'
+                        method="POST"
+                    >
                         <div>
-                            <form action='{{ url_for("login1")}}' method="POST">
-                                <div>
-                                    <label class="label">Username</label>
-                                    <div>
-                                        <input
-                                            class="input"
-                                            type="text"
-                                            name="username"
-                                            placeholder="Username"
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="label">Password</label>
-                                    <p>
-                                        <input
-                                            class="input"
-                                            type="password"
-                                            name="password"
-                                            placeholder="Password"
-                                        />
-                                    </p>
-                                </div>
-                                <div>
-                                    <p>
-                                        <button type="submit" class="button">
-                                            Login
-                                        </button>
-                                    </p>
-                                </div>
-                            </form>
-                            <form
-                                action='{{ url_for("register")}}'
-                                method="POST"
-                            >
-                                <div>
-                                    <p>
-                                        <button type="submit" class="button">
-                                            Register
-                                        </button>
-                                    </p>
-                                </div>
-                            </form>
-                            <form
-                                action='{{ url_for("leaderboard")}}'
-                                method="POST"
-                            >
-                                <div>
-                                    <p>
-                                        <button type="submit" class="button">
-                                            View Leaderboard
-                                        </button>
-                                    </p>
-                                </div>
-                            </form>
-                            
+                            <p>
+                                <button type="submit" class="button">
+                                    Register
+                                </button>
+                            </p>
                         </div>
-                    </div>
+                    </form>
+                    <form
+                        action='{{ url_for("leaderboard")}}'
+                        method="POST"
+                    >
+                        <div>
+                            <p>
+                                <button type="submit" class="button">
+                                    Leaderboard
+                                </button>
+                            </p>
+                        </div>
+                    </form>
                 </div>
             </div>
+        
+            
         </section>
     </body>
 </html>

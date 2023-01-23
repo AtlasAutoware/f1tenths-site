@@ -7,6 +7,7 @@ from flask import (
     session,
     url_for
 )
+from flask_assets import Bundle, Environment
 
 from multiprocessing import Value
 import hashlib
@@ -74,6 +75,12 @@ for i in myresult:
 
 
 app = Flask(__name__)
+assets = Environment(app)
+css = Bundle("src/main.css", output="dist/main.css")
+
+assets.register("css", css)
+css.build()
+
 app.secret_key = 'hello'
 
 @app.before_request

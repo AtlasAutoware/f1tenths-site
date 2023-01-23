@@ -5,13 +5,21 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
+        {% assets 'css' %}
+        <link rel="stylesheet" href="{{ ASSET_URL }}" />
+        {% endassets %}
     </head>
     <body>
-        <h1>Copy and paste your TestRunner class here</h1>
-        <form action='{{ url_for("compilecode")}}' method="POST">
-            <textarea name="code_" cols="70" rows="50"></textarea>
+        
+        <section class="main-sect">
+        <h1>Copy 
+            and paste your TestRunner class here</h1>
+        <form action='{{ url_for("compilecode")}}' method="POST" class="codebox">
+            <textarea name="code_" cols="100" rows="15"></textarea>
+            <br/>
 
-            <input type="submit" value="Submit Code!" />
+            <button type="submit" value="Submit Code!" class="submitcodebtn">Submit Code</button>
         </form>
+    </section>
     </body>
 </html>

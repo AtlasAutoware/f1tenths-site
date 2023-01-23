@@ -1,0 +1,120 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color: #162447;
+    height: 100%;
+}
+.main-sect{
+    height: 30vw;
+    width: 50vw;
+    background-color: white;
+    margin-left: 50vw;
+    margin-top: 10vw;
+    transform: translate(-50%, 0);
+    
+}
+
+button {
+    border: 0;
+    background-color: #1b1b2f;
+    padding: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    text-transform:uppercase;
+    color: white;
+    transition: 0.3s;
+}
+button:hover{
+    background-color: #e43f5a;
+}
+
+.login-up{
+    margin-left: 25vw;
+    transform: translate(-50%, 0);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    align-items: center;
+}
+input{
+    height: 2vw;
+    padding: 1.1vw 0; 
+    width: 15vw;
+    font-size: 1.1vw;
+}
+.regled{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-top: 7.5vw;
+    gap: 15vw;
+}
+.regled2{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-top: 17.5vw;
+    gap: 12vw;
+}
+
+h1{
+    color: #1b1b2f;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    font-size: 2.5vw;
+    margin-left: 25vw;
+    transform: translate(-50%,0);
+    text-align: center;
+    margin-bottom: 2vw;
+}
+
+.err{
+    background-color: #e43f5a;
+    color: white;
+    text-align: center;
+    width: 100%;
+    font-size: 16px;
+    padding: 0vw 0vw;
+    margin-bottom: 0.5vw;
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+
+.codebox{
+    height: 1vw;
+    margin-bottom: 0;
+}
+.submitcodebtn{
+    margin-left: 25vw;
+    transform: translate(-50%, 0);
+    text-align:center;
+}
+
+.lgrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.registerbox{
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.formregister{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4vw;
+
+}
